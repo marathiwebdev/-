@@ -82,7 +82,6 @@
   <div class="wrap">
     <h2>नोंद जोडा</h2>
     <div class="form-row">
-      <input type="date" id="date" />
       <input type="number" id="amount" placeholder="रक्कम (₹)" />
       <input type="text" id="note" placeholder="नोंद" />
       <select id="type">
@@ -98,7 +97,6 @@
     <table id="recordsTable">
       <thead>
         <tr>
-          <th>तारीख</th>
           <th>रक्कम (₹)</th>
           <th>प्रकार</th>
           <th>नोंद</th>
@@ -142,19 +140,18 @@
 
     // Add record
     addBtn.addEventListener('click', async () => {
-      const date = dateEl.value;
       const amount = parseFloat(amountEl.value);
       const note = noteEl.value.trim();
       const type = typeEl.value;
 
-      if(!date || !amount || !note){
-        statusEl.textContent = '❗ कृपया तारीख, रक्कम आणि नोंद भरा.';
+      if( !amount || !note){
+        statusEl.textContent = '❗, रक्कम आणि नोंद भरा.';
         return;
       }
 
       try {
         const newRef = db.ref('records').push();
-        await newRef.set({ date, amount, note, type });
+        await newRef.set({ amount, note, type });
         statusEl.textContent = '✅ नोंद सेव्ह झाली.';
         dateEl.value = ''; amountEl.value = ''; noteEl.value = '';
       } catch (err) {
@@ -174,7 +171,7 @@
         const tr = document.createElement('tr');
         tr.className = (r.type === 'credit') ? 'credit' : 'debit';
         tr.innerHTML =
-          `<td>${r.date||''}</td>
+       
            <td>₹${Number(r.amount||0)}</td>
            <td>${r.type==='credit'?'जमा':'खर्च'}</td>
            <td>${r.note||''}</td>`;
@@ -194,7 +191,7 @@
 
     // CSV download
     csvBtn.addEventListener('click', () => {
-      let csv = "तारीख,रक्कम,प्रकार,नोंद\n" + allRecords.map(r => r.map(x => {
+      let csv =रक्कम,प्रकार,नोंद\n" + allRecords.map(r => r.map(x => {
         const s = (x ?? '').toString().replace(/"/g,'""');
         return /[,\"\n]/.test(s) ? `"${s}"` : s;
       }).join(',')).join('\n');
